@@ -1,8 +1,5 @@
 package app;
 
-import java.util.List;
-import java.util.UUID;
-
 import javax.sql.DataSource;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -32,15 +29,26 @@ public class Application {
             Application.class);
 
       PersonService service = context.getBean(PersonService.class);
+      message("Deleting people");
       service.deleteAll();
-      List<UUID> ids = service.create();
-      System.out.println(String.format("Created %d people", ids.size()));
+
+      message("Creating people");
+      service.create(new Person("Frodo", "Baggins"));
+      service.create(new Person("Samwise", "Gamgee"));
+      service.create(new Person("Peregrin", "Took"));
+      service.create(new Person("Meriadoc", "Brandybuck"));
+      service.create(new Person("Bilbo", "Baggins"));
+      message(String.format("Created %d people", service.count()));
+
       for (Person person : service.findAll()) {
-         System.out.println(person);
+         message(person);
       }
-      System.out.println();
 
       context.close();
+   }
+
+   public static void message(Object message) {
+      System.out.println("> " + message);
    }
 
    @Bean

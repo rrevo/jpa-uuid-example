@@ -16,6 +16,7 @@ public class Person {
 
    @Id
    @GeneratedValue(generator = "uuid-gen")
+   // http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/mapping.html#d0e5294
    @GenericGenerator(name = "uuid-gen", strategy = "uuid2")
    @Column(name = "id", columnDefinition = "uuid")
    private UUID id;

@@ -2,10 +2,12 @@ package app;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+
+import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -13,20 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class PersonService {
 
    @Autowired
+   private DataSource dataSource;
+
+   @Autowired
+   private PlatformTransactionManager transactionManager;
+
+   @Autowired
    private PersonRepository repository;
 
-   public List<UUID> create() {
-      repository.save(new Person("Frodo", "Baggins"));
-      repository.save(new Person("Samwise", "Gamgee"));
-      repository.save(new Person("Peregrin", "Took"));
-      repository.save(new Person("Meriadoc", "Brandybuck"));
-      repository.save(new Person("Bilbo", "Baggins"));
-
-      List<UUID> ids = new ArrayList<UUID>();
-      for (Person p : repository.findAll()) {
-         ids.add(p.getId());
-      }
-      return ids;
+   public Person create(Person person) {
+      return repository.save(person);
    }
 
    public List<Person> findAll() {
@@ -37,8 +35,17 @@ public class PersonService {
       return people;
    }
 
+   public List<Person> findByLastName(String lastName) {
+      List<Person> people = repository.findByLastName(lastName);
+      return people;
+   }
+
    public void deleteAll() {
-      repository.deleteAll();
+      repository.deleteAllInBatch();
+   }
+
+   public long count() {
+      return repository.count();
    }
 
 }
